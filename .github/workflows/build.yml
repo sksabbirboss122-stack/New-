@@ -17,17 +17,22 @@ jobs:
       - name: Extract Source
         run: unzip -o GlowShield-Browser-v1.0.0-Source.zip
 
-      - uses: actions/setup-java@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android Packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-
-      - name: Android SDK
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Build APK
         working-directory: GlowShield-Browser
@@ -36,6 +41,6 @@ jobs:
       - name: Download APK
         uses: actions/upload-artifact@v4
         with:
-          name: GlowShield-Browser
+          name: GlowShield-Browser-APK
           path: GlowShield-Browser/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
